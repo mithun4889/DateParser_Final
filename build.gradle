@@ -11,10 +11,18 @@ repositories {
     mavenCentral()
 }
 
+task runTests(type: Test) {
+    useTestNG {
+        parallel = "classes"
+        testLogging.exceptionFormat='full'
+        threadCount = Integer.parseInt(System.getProperty('parallel', '1'))
+        useDefaultListeners = true
+        includeGroups System.getProperty('tag', 'NONE')
+        outputDirectory = file("$buildDir/" + System.getProperty('tag', 'NONE'))
+    }
+}
+
 dependencies {
     compile group: 'org.testng', name: 'testng', version: '6.14.3'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.14.0'
-    compile group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '3.8.0'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
 }

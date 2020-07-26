@@ -13,28 +13,21 @@ import org.testng.Reporter;
 
 /**
  * Home page related locators and actions to perform
- * 
- * @author santhoshlmakam
+ *
  *
  */
 public class HomePage {
 	public WebDriverUtils utility;
 	public WebDriver driver;
-//	private static final Logger logger = Logger.getLogger(HomePage.class.getName());
 
-	@FindBy(xpath = "//img[@title='Flipkart']")
-	WebElement flipkartLogo;
+	@FindBy(xpath = "//input[@name='date']")
+	WebElement dateSearchBox;
 
-	@FindBy(xpath = "//input[@title='Search for products, brands and more']")
-	WebElement searchBar;
+	@FindBy(xpath = "//input[@type='submit']")
+	WebElement searchButton;
 
-	String productDescription = "//div/a[@title='%s']";
-
-	@FindBy(xpath = "//span[text()='Cart']")
-	WebElement cartButton;
-
-	@FindBy(xpath = "//button[text()='✕']")
-	WebElement closePopUp;
+	@FindBy(xpath = "//div[@class='col-md-6'][2]/div")
+	WebElement serachResult;
 
 	public HomePage(WebDriver driver) {
 		this.driver = driver;
@@ -42,27 +35,23 @@ public class HomePage {
 		utility = new WebDriverUtils(driver);
 	}
 
-	public void searchItem(String item) {
-		utility.waitTillElementFound(searchBar,5);
-		searchBar.sendKeys(item);
-		searchBar.sendKeys(Keys.ENTER);
+	public void searchItem(String date) {
+		utility.waitTillElementFound(dateSearchBox,5);
+		dateSearchBox.sendKeys(date);
+		utility.waitTillElementFound(searchButton, 5);
+		searchButton.click();
 	}
 
-	public void verifyTheSearch(String item) {
-		String elements = String.format(productDescription,item);
-		WebElement element = driver.findElement(By.xpath(String.format(productDescription,item)));
-		utility.waitTillElementFound(element,25);
-		Assert.assertTrue(utility.isElementPresent(element));
+	public void verifyTheSearch(String expectedResult) {
+		utility.waitTillElementFound(serachResult,20);
+		String actualResult = serachResult.getText();
+		Assert.assertEquals(actualResult, expectedResult, "Actual and expected not matching");
 	}
 
 	public void goToHomePage() {
 		Reporter.log("Navigating to home page", true);
 		driver.navigate().to(ConfigReader.getConfigValue("url"));
-		utility.waitTillElementFound(flipkartLogo, 10);
-		Assert.assertEquals(driver.getTitle(), "Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More. Best Offers!");
+		Assert.assertEquals(driver.getTitle(), "Propine Date Parser");
 		Reporter.log("Navigated to home page", true);
-		if (utility.isElementPresent(closePopUp)) {
-			closePopUp.click();
-		}
 	}
 }
